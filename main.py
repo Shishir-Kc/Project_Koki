@@ -2,7 +2,12 @@ from fastapi import FastAPI
 import uvicorn
 from Models.Chat_Bot import AI
 from Pydantic_Model import Prompt
+from Agents.agent import Agent
+from fastapi.middleware.cors import CORSMiddleware
 
+
+
+ai = Agent()
 
 class Server():
 
@@ -19,7 +24,7 @@ class Server():
             }    
         @self.app.post("/chat/")
         async def get_response(data:Prompt):
-            response = await AI(prompt=data.prompt).response()
+            response = await ai.send_message(prompt=data.prompt)
             print(response)
             return {
                 'response':response
@@ -34,3 +39,10 @@ class Server():
 
 server = Server()
 app = server.app
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],  # allow GET, POST, OPTIONS, etc.
+    allow_headers=["*"],
+)
