@@ -7,7 +7,9 @@ api_key = os.environ.get("GROQ_API_KEY ")
 
 def code(prompt:str)->str:
    """
-   
+    use this function when ever you are given task to generate code !
+    ARGS:
+    prompt:str - > describe what type of code you wnat to generate and in which language ! 
  
  
  """
@@ -36,6 +38,8 @@ def code(prompt:str)->str:
    for chunnk in completion:
       if chunnk.choices[0].delta.content:
         data += chunnk.choices[0].delta.content
+   print("=========================================")
+   print("activated coder !")
    return data
     
 

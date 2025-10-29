@@ -4,10 +4,12 @@ from langgraph.prebuilt import create_react_agent
 from langchain.chat_models import init_chat_model
 from langchain_core.messages import AIMessage
 import asyncio
-from .image_process import image_content
-from .coder import code
+from .a_tools.image_process import image_content
+from .a_tools.coder import code
+from .a_tools.save_code import save_file
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph import StateGraph
+from langchain.prompts import PromptTemplate
 
 load_dotenv()
 
@@ -20,12 +22,12 @@ class Agent:
       if not self.api_key:
          raise ValueError("GROQ_API_KEY not found in environment variables")
       self.model = init_chat_model("openai/gpt-oss-120b", model_provider="groq")
-      self.tools=[self.get_weather,self.time,self.lights_control,self.play_music,image_content,code]
+      self.tools=[self.get_weather,self.time,self.lights_control,self.play_music,image_content,code,save_file]
     
       self.agent = create_react_agent(model=self.model,
                            tools=self.tools,
                         
-                           prompt="",
+                           prompt="You are an ai named SKY you are just a conversional model if user ask any thing beside conversation you may use tools corresponding to the scenerio",
                            checkpointer=self.checkpointer
                            )
       
@@ -65,6 +67,20 @@ class Agent:
 
      return f"playing {music_name} . . . . . ."
 
+   def save_file(self,code):
+     """
+     
+      use this tool to write and save code to the local machine ! 
+
+      args:
+
+      task : - > just send the code which u want to write/save !
+     
+     """
+
+     with open("try.py","w") as file:
+      file.write(code)
+      return "Code has been saved in test.py file !"
 
 
 
@@ -73,7 +89,7 @@ class Agent:
         msg = prompt
         response= self.agent.invoke(
           {'messages':[{"role":"user","content":msg}]},
-          {'configurable':{"thread_id":thread_id}}                          )
+          {'configurable':{"thread_id":thread_id}})
         final_ai_message = None
         for m in reversed(response["messages"]):
          if isinstance(m, AIMessage) and m.content:

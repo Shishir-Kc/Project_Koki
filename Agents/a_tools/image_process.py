@@ -8,7 +8,13 @@ load_dotenv()
 api_key = os.environ.get("IMAGE_PROCESS_API")
 
 def image_content(url:str,prompt:str)->str:
-
+  """
+    Use this tool to get info about what are the contents present in the image !
+    ARGS:
+    url: -> image url 
+    prompt: -> what is the information u want to get from this image ? 
+  
+  """
 #   async with httpx.AsyncClient(timeout=9000) as client:
   response = requests.post(
    url="https://openrouter.ai/api/v1/chat/completions",
